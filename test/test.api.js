@@ -111,9 +111,9 @@ describe('The Garment API', function () {
 
 		// write your code above this line
 
-		// const gender_count_sql = 'select count(*) from garment where gender = $1'
-		// const maleCount = await db.one(gender_count_sql, ['Male'], r => r.count);
-		// const femaleCount = await db.one(gender_count_sql, ['Female'], r => r.count);
+		const gender_count_sql = 'select count(*) from garment where gender = $1'
+		const maleCount = await db.one(gender_count_sql, ['Male'], r => r.count);
+		const femaleCount = await db.one(gender_count_sql, ['Female'], r => r.count);
 
 		const maleResult = await supertest(app).get(`/api/garments?gender=Male`);
 		// console.log(maleResult.body.data);
@@ -214,9 +214,9 @@ describe('The Garment API', function () {
 			.delete(`/api/garments?gender=Unisex`)
 			.expect(200);
 
-		// const unisexResults = await supertest(app).get(`/api/garments?gender=Unisex`);
-		// const unisexData = unisexResults.body
-		// assert.equal(0, unisexData.data.length);
+		const unisexResults = await supertest(app).get(`/api/garments?gender=Unisex`);
+		const unisexData = unisexResults.body
+		assert.equal(0, unisexData.data.length);
 
 	});
 

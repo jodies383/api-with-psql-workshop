@@ -2,16 +2,28 @@ module.exports = function (app, db) {
 
 	app.get('/api/test', function (req, res) {
 		res.json({
-			name: ''
+			name: 'joe'
 		});
 	});
 
 	app.get('/api/garments', async function (req, res) {
 
 		const { gender, season } = req.query;
-		let garments = [];
-		// add some sql queries that filter on gender & season
+		let garments
+		if (!gender && !season) {
+			garments = await db.many(`select * from garment`);
+		}
+		else if (gender && !season){
+			garments = await db.many(`select * from garment where gender = $1`, [gender]);
+		}
+		else if (!gender && season){
+			garments = await db.many(`select * from garment where season = $1`, [season]);
+		}
+		// else if (gender && season){
+		// 	garments = await db.many(`select * from garment where season = $1 and gender = $2`, [season],[gender]);
+		// }
 
+		// add some sql queries that filter on gender & season
 		res.json({
 			data: garments
 		})
@@ -24,17 +36,19 @@ module.exports = function (app, db) {
 			// use an update query...
 
 			const { id } = req.params;
-			// const garment = await db.oneOrNone(`select * from garment where id = $1`, [id]);
-
+			const garment = await db.oneOrNone(`select * from garment where id = $1`, [id]);
+			'select gender from garment where id = $1'
 			// you could use code like this if you want to update on any column in the table
 			// and allow users to only specify the fields to update
-
-			// let params = { ...garment, ...req.body };
-			// const { description, price, img, season, gender } = params;
+			'update garment set gender = $1 where gender = $2 and id = $3'
+			let params = { ...garment, ...req.body };
+			const { description, price, img, season, gender } = params;
+			// (`update ${description} where ${params} = `)
 
 
 			res.json({
-				status: 'success'
+				status: 'success',
+				gender: gender
 			})
 		} catch (err) {
 			console.log(err);
@@ -72,8 +86,8 @@ module.exports = function (app, db) {
 		try {
 
 			const { description, price, img, season, gender } = req.body;
-
 			// insert a new garment in the database
+			await db.none(`insert into garment ${description},${price},${img},${season},${gender}`)
 
 			res.json({
 				status: 'success',
@@ -102,7 +116,7 @@ module.exports = function (app, db) {
 		try {
 			const { gender } = req.query;
 			// delete the garments with the specified gender
-
+		await db.none('delete * from garment where gender = $1', [gender])
 			res.json({
 				status: 'success'
 			})
