@@ -113,7 +113,7 @@ module.exports = function (app, db) {
 	app.delete('/api/garments', async function (req, res) {
 
 		try {
-			const { gender } = req.query;
+			let { gender } = req.query;
 			// delete the garments with the specified gender
 			await db.none(`delete from garment where gender = $1`, [gender])
 			res.json({
