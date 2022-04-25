@@ -8,6 +8,7 @@ module.exports = function (app, db) {
 
 	app.get('/api/garments', async function (req, res) {
 
+		// add some sql queries that filter on gender & season
 		const { season, gender } = req.query;
 		let garments
 		if (!gender && !season) {
@@ -23,7 +24,6 @@ module.exports = function (app, db) {
 			garments = await db.many(`select * from garment where season = $1 and gender = $2`, [season, gender]);
 		}
 
-		// add some sql queries that filter on gender & season
 		res.json({
 			data: garments
 		})
@@ -36,14 +36,30 @@ module.exports = function (app, db) {
 			// use an update query...
 
 			const { id } = req.params;
-			const garment = await db.many(`select description from garment where id = $1`, [id]);
+			const garment = await db.many(`select * from garment where id = $1`, [id]);
 
 			// you could use code like this if you want to update on any column in the table
 			// and allow users to only specify the fields to update
 
-			// let params = { ...garment, ...req.body };
-			// const { description, price, img, season, gender } = params;
-			await db.oneOrNone(`update garment set gender = 'Unisex' where id = $1`, [id])
+			let params = { ...garment, ...req.body };
+			const { description, price, img, season, gender } = params;
+			if (description) {
+				await db.oneOrNone(`update garment set description = $1 where id = $2`, [description, id])
+			}
+			else if (price) {
+				await db.oneOrNone(`update garment set price = $1 where id = $2`, [price, id])
+			}
+			else if (img) {
+				await db.oneOrNone(`update img set img = $1 where id = $2`, [img, id])
+
+			}
+			else if (season) {
+				await db.oneOrNone(`update garment set season = $1 where id = $2`, [season, id])
+
+			}
+			else if (gender) {
+				await db.oneOrNone(`update garment set gender = $1 where id = $2`, [gender, id])
+			}
 
 
 			res.json({
@@ -86,7 +102,7 @@ module.exports = function (app, db) {
 
 			const { description, price, img, season, gender } = req.body;
 			// insert a new garment in the database
-			await db.none(`insert into garment (description, img, season, gender, price) values ($1,$2,$3,$4,$5)`, [description,img,season,gender,price])
+			await db.none(`insert into garment (description, img, season, gender, price) values ($1,$2,$3,$4,$5)`, [description, img, season, gender, price])
 
 			res.json({
 				status: 'success'
