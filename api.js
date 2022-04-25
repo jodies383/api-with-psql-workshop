@@ -8,20 +8,20 @@ module.exports = function (app, db) {
 
 	app.get('/api/garments', async function (req, res) {
 
-		const { gender, season } = req.query;
+		const { season, gender } = req.query;
 		let garments
 		if (!gender && !season) {
 			garments = await db.many(`select * from garment`);
 		}
-		else if (gender && !season){
+		else if (gender && !season) {
 			garments = await db.many(`select * from garment where gender = $1`, [gender]);
 		}
-		else if (!gender && season){
+		else if (!gender && season) {
 			garments = await db.many(`select * from garment where season = $1`, [season]);
 		}
-		// else if (gender && season){
-		// 	garments = await db.many(`select * from garment where season = $1 and gender = $2`, [season],[gender]);
-		// }
+		else if (gender && season) {
+			garments = await db.many(`select * from garment where season = $1 and gender = $2`, [season, gender]);
+		}
 
 		// add some sql queries that filter on gender & season
 		res.json({
@@ -36,19 +36,18 @@ module.exports = function (app, db) {
 			// use an update query...
 
 			const { id } = req.params;
-			const garment = await db.oneOrNone(`select * from garment where id = $1`, [id]);
-			'select gender from garment where id = $1'
+			const garment = await db.many(`select description from garment where id = $1`, [id]);
+
 			// you could use code like this if you want to update on any column in the table
 			// and allow users to only specify the fields to update
-			'update garment set gender = $1 where gender = $2 and id = $3'
-			let params = { ...garment, ...req.body };
-			const { description, price, img, season, gender } = params;
-			// (`update ${description} where ${params} = `)
+
+			// let params = { ...garment, ...req.body };
+			// const { description, price, img, season, gender } = params;
+			await db.oneOrNone(`update garment set gender = 'Unisex' where id = $1`, [id])
 
 
 			res.json({
-				status: 'success',
-				gender: gender
+				status: 'success'
 			})
 		} catch (err) {
 			console.log(err);
@@ -64,7 +63,7 @@ module.exports = function (app, db) {
 		try {
 			const { id } = req.params;
 			// get the garment from the database
-			const garment = null;
+			const garment = await db.one(`select gender from garment where id = $1`, [id]);
 
 			res.json({
 				status: 'success',
@@ -87,10 +86,10 @@ module.exports = function (app, db) {
 
 			const { description, price, img, season, gender } = req.body;
 			// insert a new garment in the database
-			await db.none(`insert into garment ${description},${price},${img},${season},${gender}`)
+			await db.none(`insert into garment (description, img, season, gender, price) values ($1,$2,$3,$4,$5)`, [description,img,season,gender,price])
 
 			res.json({
-				status: 'success',
+				status: 'success'
 			});
 
 		} catch (err) {
@@ -103,7 +102,7 @@ module.exports = function (app, db) {
 	});
 
 	app.get('/api/garments/grouped', async function (req, res) {
-		const result = []		
+		const result = await db.many('select gender, count(*) from garment group by gender ORDER BY count(*) ASC')
 		// use group by query with order by asc on count(*)
 		res.json({
 			data: result
@@ -116,7 +115,7 @@ module.exports = function (app, db) {
 		try {
 			const { gender } = req.query;
 			// delete the garments with the specified gender
-		await db.none('delete * from garment where gender = $1', [gender])
+			await db.none(`delete from garment where gender = $1`, [gender])
 			res.json({
 				status: 'success'
 			})
@@ -124,7 +123,7 @@ module.exports = function (app, db) {
 			// console.log(err);
 			res.json({
 				status: 'success',
-				error : err.stack
+				error: err.stack
 			})
 		}
 	});

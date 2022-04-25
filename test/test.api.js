@@ -103,7 +103,6 @@ describe('The Garment API', function () {
 		// console.log(response.body)
 
 		assert.equal('Unisex', response.body.data.gender);
-
 	});
 
 	it('you should be able to add 2 Male & 3 Female garments', async () => {
@@ -176,7 +175,6 @@ describe('The Garment API', function () {
 
 		const updatedFemaleResult = await supertest(app).get(`/api/garments?gender=Female`);
 		assert.equal(16, updatedFemaleResult.body.data.length);
-
 	});
 
 	it('you should be able to group garments by gender and count them', async () => {
@@ -217,9 +215,7 @@ describe('The Garment API', function () {
 		const unisexResults = await supertest(app).get(`/api/garments?gender=Unisex`);
 		const unisexData = unisexResults.body
 		assert.equal(0, unisexData.data.length);
-
 	});
-
 	after(() => {
 		db.$pool.end();
 	});
