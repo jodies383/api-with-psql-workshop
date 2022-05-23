@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Missy Tee Clothing store</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body x-data="garment" x-init="getData()">
+    <nav class="navbar navbar-dark bg-dark">
+        <div class="justify-content-center container-fluid" id="brand">
+
+            <h1 class="text-center title">Missy Tee Clothing Store</h1>
+        </div>
+    </nav>
+    <div class="container">
+        <div class="garmentApi">
+            <div class="filter">
+                <h2>Filter garments</h2>
+                <div class="genders" x-model="gender">
+                    <label>
+                        <input type="radio" name="gender" value=""> All
+                    </label>
+                    
+                    <label>
+                        <input type="radio" name="gender" value="Male" @click="filterGarments()"> Male
+                    </label>
+                    
+                    <label>
+                        <input type="radio" name="gender" value="Female" @click="filterGarments()"> Female
+                    </label>
+                    <label>
+                        <input type="radio" name="gender" value="Unisex" @click="filterGarments()"> Unisex
+                    </label>
+                </div>
+                <div class="seasons" x-model="season">
+
+                    <label>
+                        <input type="radio" name="season" value="" @click="filterGarments()"> All
+                    </label>
+                    <label>
+                        <input type="radio" name="season" value="Summer" @click="filterGarments()"> Summer
+                    </label>
+                    <label>
+                        <input type="radio" name="season" value="Winter" @click="filterGarments()"> Winter
+                    </label>
+                    <label>
+                        <input type="radio" name="season" value="All Seasons" @click="filterGarments()"> All seasons
+                    </label>
+                </div>
+                <div>
+                    Filter by price range:
+                    <input type="range" name="priceRange" max="1000" step="50" class="priceRange" value="0">
+                    R<span class="showPriceRange">0</span>.00
+                </div>
+            </div>
+
+            <div class="message" id="snackbar">
+
+            </div>
+
+            <div class="addGarment">
+                <button class="btn btn-dark add button mt1" id="addGarmentBtn">Add garment</button>
+                <div class="add garment hidden">
+                    <h2>Add garment</h2>
+                    <!-- <img :src="`images/${garment.img}`"> -->
+                    <div class="field">
+                        <label for="">Description</label>
+                        <input type="text" name="description" class="description">
+                    </div>
+                    <div class="field">
+                        <label for="">Image</label>
+                        <input type="text" name="img" class="img">
+                    </div>
+                    <div class="field">
+                        <label for="">Price</label>
+                        <input type="number" name="price" step="0.01" class="price">
+                    </div>
+                    <div class="field">
+                        <label for="">Gender</label>
+                        <div>
+                            <input type="text" name="gender" class="gender">
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label for="">Season</label>
+                        <div>
+                            <input type="text" name="season" class="season">
+                        </div>
+                    </div>
+                    <div class="mt1">
+                        <input onclick="myFunction()" type="button" name="action" value="Add"
+                            class="btn btn-dark addGarmentBtn">
+                        <input type="button" name="action" value="Hide" class="btn btn-dark hideAddGarmetBtn">
+                    </div>
+                </div>
+
+            </div>
+
+            <div>
+                <h2>Garments</h2>
+                <div>
+                    <div class="garments">
+                        <template x-for="garment in garments">
+                            <div class="garment">
+                                <img :src="`images/${garment.img}`">
+                                <div class="field">
+                                    <span x-text="garment.description"></span>
+                                </div>
+                                <div class="field">
+                                    <strong>
+                                        <span x-text="garment.price"></span>
+                                    </strong>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+    
+
+    </div>
+    <!-- Alpine Plugins -->
+    <script defer src="https://unpkg.com/@alpinejs/persist@3.x.x/dist/cdn.min.js"></script>
+
+    <!-- Alpine Core -->
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="app.js"></script>
+</body>
+
+
+</html>
