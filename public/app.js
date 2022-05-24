@@ -4,7 +4,11 @@ document.addEventListener('alpine:init', () => {
         garments: '',
         gender: '',
         season: '',
-
+        open: false,
+ 
+        toggle() {
+            this.open = ! this.open
+        },
         getData(){
         axios
             .get(`/api/garments`)

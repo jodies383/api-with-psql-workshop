@@ -66,8 +66,8 @@
             </div>
 
             <div class="addGarment">
-                <button class="btn btn-dark add button mt1" id="addGarmentBtn">Add garment</button>
-                <div class="add garment hidden">
+                <button @click="toggle" class="btn btn-dark add button mt1" id="addGarmentBtn">Add garment</button>
+                <div class="add garment" x-show="open">
                     <h2>Add garment</h2>
                     <!-- <img :src="`images/${garment.img}`"> -->
                     <div class="field">
@@ -97,7 +97,7 @@
                     <div class="mt1">
                         <input onclick="myFunction()" type="button" name="action" value="Add"
                             class="btn btn-dark addGarmentBtn">
-                        <input type="button" name="action" value="Hide" class="btn btn-dark hideAddGarmetBtn">
+                        <input @click="toggle" type="button" name="action" value="Hide" class="btn btn-dark hideAddGarmetBtn">
                     </div>
                 </div>
 
