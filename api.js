@@ -124,6 +124,16 @@ module.exports = function (app, db) {
 			data: result
 		})
 	});
+	app.get('/api/garments/price/:price', async function (req, res) {
+		const maxPrice = Number(req.params.price);
+		let result
+		if (maxPrice > 0) {
+		result = await db.many('select * from garment where price <= $1', [maxPrice])
+		}
+		res.json({
+			data: result
+		})
+	});
 
 
 	app.delete('/api/garments', async function (req, res) {

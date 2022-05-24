@@ -23,7 +23,7 @@
         <div class="garmentApi">
             <div class="filter">
                 <h2>Filter garments</h2>
-                <div class="genders" x-model="gender">
+                <div class="genders" x-model="genderFilter">
                     <label>
                         <input type="radio" name="gender" value=""> All
                     </label>
@@ -39,7 +39,7 @@
                         <input type="radio" name="gender" value="Unisex" @click="filterGarments()"> Unisex
                     </label>
                 </div>
-                <div class="seasons" x-model="season">
+                <div class="seasons" x-model="seasonFilter">
 
                     <label>
                         <input type="radio" name="season" value="" @click="filterGarments()"> All
@@ -54,10 +54,10 @@
                         <input type="radio" name="season" value="All Seasons" @click="filterGarments()"> All seasons
                     </label>
                 </div>
-                <div>
+                <div class="col-3">
                     Filter by price range:
-                    <input type="range" name="priceRange" max="1000" step="50" class="priceRange" value="0">
-                    R<span class="showPriceRange">0</span>.00
+                    <input type="range" class="form-range" name="priceRange" max="1000" min="0" step="50" class="priceRange" value="0" @click="filterGarmentsByPrice()" x-model="maxPrice">
+                    R<span x-text="Number(maxPrice).toFixed(2)" class="showPriceRange"></span>
                 </div>
             </div>
 
@@ -72,31 +72,31 @@
                     <!-- <img :src="`images/${garment.img}`"> -->
                     <div class="field">
                         <label for="">Description</label>
-                        <input type="text" name="description" class="description">
+                        <input type="text" name="description" class="description" x-model="description">
                     </div>
                     <div class="field">
                         <label for="">Image</label>
-                        <input type="text" name="img" class="img">
+                        <input type="text" name="img" class="img" x-model="img">
                     </div>
                     <div class="field">
                         <label for="">Price</label>
-                        <input type="number" name="price" step="0.01" class="price">
+                        <input type="number" name="price" step="0.01" class="price" x-model="price">
                     </div>
                     <div class="field">
                         <label for="">Gender</label>
                         <div>
-                            <input type="text" name="gender" class="gender">
+                            <input type="text" name="gender" class="gender" x-model="gender">
                         </div>
                     </div>
                     <div class="field">
                         <label for="">Season</label>
                         <div>
-                            <input type="text" name="season" class="season">
+                            <input type="text" name="season" class="season" x-model="season">
                         </div>
                     </div>
                     <div class="mt1">
-                        <input onclick="myFunction()" type="button" name="action" value="Add"
-                            class="btn btn-dark addGarmentBtn">
+                        <input @click="addGarment()" type="button" name="action" value="Add"
+                        class="btn btn-dark addGarmentBtn">
                         <input @click="toggle" type="button" name="action" value="Hide" class="btn btn-dark hideAddGarmetBtn">
                     </div>
                 </div>
