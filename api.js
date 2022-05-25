@@ -12,16 +12,16 @@ module.exports = function (app, db) {
 		const { season, gender } = req.query;
 		let garments
 		if (!gender && !season) {
-			garments = await db.many(`select * from garment`);
+			garments = await db.manyOrNone(`select * from garment`);
 		}
 		else if (gender && !season) {
-			garments = await db.many(`select * from garment where gender = $1`, [gender]);
+			garments = await db.manyOrNone(`select * from garment where gender = $1`, [gender]);
 		}
 		else if (!gender && season) {
-			garments = await db.many(`select * from garment where season = $1`, [season]);
+			garments = await db.manyOrNone(`select * from garment where season = $1`, [season]);
 		}
 		else if (gender && season) {
-			garments = await db.many(`select * from garment where season = $1 and gender = $2`, [season, gender]);
+			garments = await db.manyOrNone(`select * from garment where season = $1 and gender = $2`, [season, gender]);
 		}
 
 		res.json({
