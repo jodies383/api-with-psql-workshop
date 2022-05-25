@@ -2,6 +2,7 @@ document.addEventListener('alpine:init', () => {
     Alpine.data('garment', () => ({
 
         garments: '',
+        garmentsLength: 0,
         genderFilter: '',
         seasonFilter: '',
         maxPrice: 0,
@@ -21,14 +22,26 @@ document.addEventListener('alpine:init', () => {
             .then(result => {
                 const results = result.data
                 this.garments=results.data
+                this.garmentsLength=results.data.length
+
             })
         },
+        getDataLength(){
+            axios
+                .get(`/api/garments`)
+                .then(result => {
+                    const results = result.data
+                    this.garmentsLength=results.data.length
+                })
+            },
         filterGarments(){
             axios
             .get(`/api/garments?gender=${this.genderFilter}&season=${this.seasonFilter}`)
             .then(result => {
                 const results = result.data
                 this.garments=results.data
+                this.garmentsLength=results.data.length
+
             })
         },
         filterGarmentsByPrice(){
@@ -37,6 +50,8 @@ document.addEventListener('alpine:init', () => {
             .then(result => {
                 const results = result.data
                 this.garments=results.data
+                this.garmentsLength=results.data.length
+
             })
         },
         addGarment(){
