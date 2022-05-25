@@ -1,6 +1,8 @@
 document.addEventListener('alpine:init', () => {
     Alpine.data('garment', () => ({
 
+        errorMessage: false,
+        successMessage: false,
         garments: '',
         garmentsLength: 0,
         genderFilter: '',
@@ -77,20 +79,32 @@ document.addEventListener('alpine:init', () => {
                this.img='', 
                this.season='', 
                this.gender=''
-                // if (result.data.status == 'error') {
-                //     showMessage(result.data.message);
-                // } else {
-                    // toggle();
-                    // show success message from API
-                    // showMessage(result.data.message);
-                    // fieldManager.clear();
-                    // show all the data
-                //  getData();
-                // }
             })
-            // .catch(err => {
-            //     showMessage(err.stack)
-            // });
+            if (!fields === ''){
+                this.successMessage = true,
+                this.$refs.successMessage.innerText = 'garment added'
+                
+            }
+            else {
+                if (!this.description){
+                    this.errorMessage = true,
+                    this.$refs.errorMessage.innerText = 'missing description information'
+                } else if (!this.price){
+                    this.errorMessage = true,
+                    this.$refs.errorMessage.innerText = 'missing price information'
+                } else if (!this.img){
+                    this.errorMessage = true,
+                    this.$refs.errorMessage.innerText = 'missing img information'
+                } else if (!this.season){
+                    this.errorMessage = true,
+                    this.$refs.errorMessage.innerText = 'missing season information'
+                } else if (!this.gender){
+                    this.errorMessage = true,
+                    this.$refs.errorMessage.innerText = 'missing gender information'
+                } 
+            }
+            setTimeout(() => { this.successMessage = false }, 2000);
+            setTimeout(() => { this.errorMessage = false }, 2000);
         },
         
 

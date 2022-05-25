@@ -21,36 +21,38 @@
     </nav>
     <div class="container">
         <div class="garmentApi">
+            <p id="snackbar" class="error" x-ref="errorMessage" x-show="errorMessage"></p>
+            <p id="snackbar" class="success" x-ref="successMessage" x-show="successMessage"></p>
             <div class="filter">
                 <h2>Filter garments</h2>
-                <div class="genders" x-model="genderFilter">
+                <div class="genders" x-on:change="filterGarments()" x-model="genderFilter">
                     <label>
-                        <input type="radio" name="gender" value=""> All
+                        <input type="radio" name="gender" value="" > All
                     </label>
                     
                     <label>
-                        <input type="radio" name="gender" value="Male" @click="filterGarments()"> Male
+                        <input type="radio" name="gender" value="Male" > Male
                     </label>
                     
                     <label>
-                        <input type="radio" name="gender" value="Female" @click="filterGarments()"> Female
+                        <input type="radio" name="gender" value="Female" > Female
                     </label>
                     <label>
-                        <input type="radio" name="gender" value="Unisex" @click="filterGarments()"> Unisex
+                        <input type="radio" name="gender" value="Unisex" > Unisex
                     </label>
                 </div>
-                <div class="seasons" x-model="seasonFilter">
+                <div class="seasons" x-on:change="filterGarments()" x-model="seasonFilter">
                     <label>
-                        <input type="radio" name="season" value="" @click="filterGarments()"> All
+                        <input type="radio" name="season" value="" > All
                     </label>
                     <label>
-                        <input type="radio" name="season" value="Summer" @click="filterGarments()"> Summer
+                        <input type="radio" name="season" value="Summer"> Summer
                     </label>
                     <label>
-                        <input type="radio" name="season" value="Winter" @click="filterGarments()"> Winter
+                        <input type="radio" name="season" value="Winter"> Winter
                     </label>
                     <label>
-                        <input type="radio" name="season" value="All Seasons" @click="filterGarments()"> All seasons
+                        <input type="radio" name="season" value="All Seasons"> All seasons
                     </label>
                 </div>
                 <div class="col-3">
@@ -59,8 +61,6 @@
                     R<span x-text="Number(maxPrice).toFixed(2)" class="showPriceRange"></span>
                 </div>
             </div>
-
-            <div class="message" id="snackbar">
 
             </div>
 

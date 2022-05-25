@@ -102,8 +102,11 @@ module.exports = function (app, db) {
 
 			const { description, price, img, season, gender } = req.body;
 			// insert a new garment in the database
-			await db.none(`insert into garment (description, img, season, gender, price) values ($1,$2,$3,$4,$5)`, [description, img, season, gender, price])
-
+			let checkDuplicate = await db.manyOrNone(`SELECT id from garment WHERE description = $1`, [description]);
+			
+			if (checkDuplicate.length < 1) {
+				await db.none(`insert into garment (description, img, season, gender, price) values ($1,$2,$3,$4,$5)`, [description, img, season, gender, price])
+			}
 			res.json({
 				status: 'success'
 			});
@@ -128,7 +131,7 @@ module.exports = function (app, db) {
 		const maxPrice = Number(req.params.price);
 		let result
 		if (maxPrice > 0) {
-		result = await db.many('select * from garment where price <= $1', [maxPrice])
+			result = await db.many('select * from garment where price <= $1', [maxPrice])
 		}
 		res.json({
 			data: result
