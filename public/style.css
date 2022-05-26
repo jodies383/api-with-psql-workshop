@@ -44,6 +44,10 @@ img {
 	margin: 0.25em;
 	border-radius: 0.5em;
 }
+.garment:hover{
+	background-color: rgb(195, 221, 191);
+	cursor: pointer;
+}
 
 .hidden {
 	display: none;
