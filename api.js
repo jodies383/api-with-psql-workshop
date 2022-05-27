@@ -112,9 +112,10 @@ module.exports = function (app, db) {
 					status: 'success'
 				});
 			}
-			else if (checkDuplicate.length > 1) {
-				let err = req.body
-				let message = req.body
+			else {
+				res.status(200).json({
+					message: 'duplicate'
+				})
 			}
 
 		} catch (err) {

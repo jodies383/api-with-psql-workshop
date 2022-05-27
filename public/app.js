@@ -64,14 +64,20 @@ document.addEventListener('alpine:init', () => {
                 price: this.price,
                 gender: this.gender,
                 season: this.season,
-                err: this.errorMessage = true,
-                message: this.$refs.errorMessage.innerText = 'garment already exists'
             };
 
             if (this.description && this.price && this.img && this.season && this.gender !== '') {
                 axios
                     .post('/api/garment', fields)
                     .then(result => {
+                        if (result.data.message === 'duplicate') {
+                            this.errorMessage = true,
+                                this.$refs.errorMessage.innerText = 'this garment already exists'
+                            console.log(result.data.message)
+                        } else {
+                            this.successMessage = true,
+                                this.$refs.successMessage.innerText = 'garment added'
+                        }
                         this.open = false
                         axios
                             .get(`/api/garments`)
@@ -91,7 +97,7 @@ document.addEventListener('alpine:init', () => {
 
                 if (!fields === '') {
                     this.successMessage = true,
-                        this.$refs.successMessage.innerText = 'garment added'
+                    this.$refs.successMessage.innerText = 'garment added'
 
                 }
                 else {
@@ -133,7 +139,5 @@ document.addEventListener('alpine:init', () => {
                         })
                 })
         },
-
-
     }));
 })
