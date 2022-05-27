@@ -56,16 +56,19 @@ document.addEventListener('alpine:init', () => {
 
                 })
         },
+
         addGarment() {
             const fields = {
                 description: this.description,
                 img: this.img,
                 price: this.price,
                 gender: this.gender,
-                season: this.season
+                season: this.season,
+                err: this.errorMessage = true,
+                message: this.$refs.errorMessage.innerText = 'garment already exists'
             };
-            if (this.description && this.price && this.img && this.season && this.gender !== '') {
 
+            if (this.description && this.price && this.img && this.season && this.gender !== '') {
                 axios
                     .post('/api/garment', fields)
                     .then(result => {
@@ -118,16 +121,16 @@ document.addEventListener('alpine:init', () => {
                 .delete(`/api/garments?description=${description}`)
                 .then(result => {
 
-                })
-            axios
-                .get(`/api/garments`)
-                .then(result => {
-                    const results = result.data
-                    this.garments = results.data
-                    this.garmentsLength = results.data.length
-                    this.successMessage = true,
-                        this.$refs.successMessage.innerText = 'garment deleted'
-                    setTimeout(() => { this.successMessage = false }, 2000);
+                    axios
+                        .get(`/api/garments`)
+                        .then(result => {
+                            const results = result.data
+                            this.garments = results.data
+                            this.garmentsLength = results.data.length
+                            this.successMessage = true,
+                                this.$refs.successMessage.innerText = 'garment deleted'
+                            setTimeout(() => { this.successMessage = false }, 2000);
+                        })
                 })
         },
 

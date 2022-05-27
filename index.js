@@ -3,6 +3,7 @@ const express = require('express');
 const fs = require('fs');
 require('dotenv').config()
 const API = require('./api');
+
 const { default: axios } = require('axios');
 const app = express();
 
@@ -33,7 +34,6 @@ const db = pgp(get_PostgreSQL_connection());
 // const db = pgp(DATABASE_URL);
 app.use(express.static('public'))
 API(app, db);
-
 //configure the port number using and environment number
 var portNumber = process.env.PORT || 3000;
 

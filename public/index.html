@@ -111,7 +111,7 @@
                     <div class="garments">
                         <template x-for="garment in garments">
                             <div class="garment">
-                                <div x-on:click="deleteGarment(garment.description)" class=""> <i class="fa-solid fa-trash"></i> </div>
+                                <div> <i x-on:click="deleteGarment(garment.description)" class="fa-solid fa-trash"></i> </div>
                                 <img :src="`images/${garment.img}`">
                                 <div class="field">
                                     <span x-text="garment.description"></span>

@@ -46,9 +46,11 @@ img {
 }
 .garment:hover{
 	background-color: rgb(195, 221, 191);
-	cursor: pointer;
+	
 }
-
+i:hover{
+    cursor: pointer;
+}
 .hidden {
 	display: none;
 }
