@@ -20,7 +20,21 @@
             <h1 class="text-center title">Missy Tee Clothing Store</h1>
         </div>
     </nav>
-    <div class="container">
+    <div class="loginInfo" x-show="loginInfo">
+        <div class="d-flex justify-content-center">
+            <h4>enter your github username</h4>
+        </div>
+        <div class="row">
+            <div class="d-flex justify-content-center">
+                <input type="text" x-model="username" class="username" name="username" id="">
+                <button @click="registerUser()" x-show="register" class="btn btn-dark register">Register</button>
+                <button @click="userLogin()" class="btn btn-dark login" x-show="login">Login</button>
+
+            </div>
+        </div>
+
+    </div>
+    <div class="container" x-show="accessGarments">
         <div class="garmentApi">
             <p id="snackbar" class="error" x-ref="errorMessage" x-show="errorMessage"></p>
             <p id="snackbar" class="success" x-ref="successMessage" x-show="successMessage"></p>

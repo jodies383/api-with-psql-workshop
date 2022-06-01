@@ -12,7 +12,8 @@ app.use(express.urlencoded({ extended: false }));
 const {ConnectionString} = require('connection-string');
 const { DATABASE_URL } = process.env;
 const cs = new ConnectionString(DATABASE_URL);
- 
+const jwt = require('jsonwebtoken')
+
 function get_PostgreSQL_connection() {
    return {
        host: cs.hostname,
@@ -29,11 +30,11 @@ const pgp = PgPromise({});
  
 const db = pgp(get_PostgreSQL_connection());
 
-// const DATABASE_URL = process.env.DATABASE_URL;
-// const pgp = PgPromise({});
-// const db = pgp(DATABASE_URL);
 app.use(express.static('public'))
 API(app, db);
+
+
+
 //configure the port number using and environment number
 var portNumber = process.env.PORT || 3000;
 

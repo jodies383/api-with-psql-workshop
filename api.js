@@ -1,12 +1,43 @@
 module.exports = function (app, db) {
+	const jwt = require('jsonwebtoken')
+	
+	app.post('/api/login', (req, res, next) => {
+		const { username } = req.body;
+	
+		const token = jwt.sign({
+			username
+		}, process.env.ACCESS_TOKEN_SECRET);
+	
+		res.json({
+			token
+		});
+	
+	})
+	function verifyToken(req, res, next) {
 
+		const token = req.headers.authorization && req.headers.authorization.split(" ")[1];
+		if (!req.headers.authorization || !token) {
+			res.sendStatus(401);
+			return;
+		}	
+		const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+	
+		const { username } = decoded;
+	
+		if (username && username === process.env.USERNAME) {
+			next();
+		} else {
+			res.sendStatus(403);
+		}
+	
+	}
 	app.get('/api/test', function (req, res) {
 		res.json({
 			name: 'joe'
 		});
 	});
 
-	app.get('/api/garments', async function (req, res) {
+	app.get('/api/garments', verifyToken, async function (req, res) {
 
 		// add some sql queries that filter on gender & season
 		const { season, gender } = req.query;

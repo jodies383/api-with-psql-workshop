@@ -1,4 +1,5 @@
 document.addEventListener('alpine:init', () => {
+    axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
     Alpine.data('garment', () => ({
 
         errorMessage: false,
@@ -14,18 +15,61 @@ document.addEventListener('alpine:init', () => {
         img: '',
         season: '',
         gender: '',
+        accessGarments: false,
+        loginInfo: true,
+        register: true,
+        login: false,
+        username: '',
+
 
         toggle() {
             this.open = !this.open
         },
+        registerUser() {
+            if (this.username !== '') {
+                axios
+                    .post('/api/login/', { username: this.username })
+                    .then(function (result) {
+                        const { token } = result.data;
+
+                        localStorage.setItem('token', token);
+
+                        axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
+                    });
+                this.register = false
+                this.login = true
+
+            }
+            else if (this.username == '') {
+                this.errorMessage = true,
+                    this.$refs.errorMessage.innerText = 'github username required'
+            }
+        },
+        userLogin() {
+            const url = `/api/garments`;
+            axios
+                .get(url)
+                .then(result =>  {
+                    const results = result.data
+                    this.garments = results.data
+                    this.garmentsLength = results.data.length
+                    axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
+                    accessGarments = true
+                    loginInfo = false
+                })
+        },
         getData() {
+            if (localStorage.getItem('token')) {
+                accessGarments = true
+                loginInfo = false
+            }
             axios
                 .get(`/api/garments`)
                 .then(result => {
                     const results = result.data
                     this.garments = results.data
                     this.garmentsLength = results.data.length
-
+                    axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
                 })
         },
         getDataLength() {
@@ -97,7 +141,7 @@ document.addEventListener('alpine:init', () => {
 
                 if (!fields === '') {
                     this.successMessage = true,
-                    this.$refs.successMessage.innerText = 'garment added'
+                        this.$refs.successMessage.innerText = 'garment added'
 
                 }
                 else {
