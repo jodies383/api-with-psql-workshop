@@ -27,7 +27,9 @@ module.exports = function (app, db) {
 		if (username && username === process.env.USERNAME) {
 			next();
 		} else {
-			res.sendStatus(403);
+			res.status(403).json({
+				message: 'unauthorized'
+			});
 		}
 	
 	}

@@ -15,10 +15,11 @@
 
 <body x-data="garment" x-init="getData()">
     <nav class="navbar navbar-dark bg-dark">
-        <div class="justify-content-center container-fluid" id="brand">
-
-            <h1 class="text-center title">Missy Tee Clothing Store</h1>
+        <div class="container-fluid" id="brand">
+            <h1 class="justify-content-center text-center title">Missy Tee Clothing Store</h1>
+            <button @click="logout()" class="btn btn-primary" x-show="accessGarments">Log Out</button>
         </div>
+
     </nav>
     <div class="loginInfo" x-show="loginInfo">
         <div class="d-flex justify-content-center">
@@ -34,31 +35,31 @@
         </div>
 
     </div>
+    <p id="snackbar" class="error" x-ref="errorMessage" x-show="errorMessage"></p>
+    <p id="snackbar" class="success" x-ref="successMessage" x-show="successMessage"></p>
     <div class="container" x-show="accessGarments">
-        <div class="garmentApi">
-            <p id="snackbar" class="error" x-ref="errorMessage" x-show="errorMessage"></p>
-            <p id="snackbar" class="success" x-ref="successMessage" x-show="successMessage"></p>
-            <div class="filter">
+        <div class="garmentApi row">
+            <div class="filter col-3">
                 <h2>Filter garments</h2>
                 <div class="genders" x-on:change="filterGarments()" x-model="genderFilter">
                     <label>
-                        <input type="radio" name="gender" value="" > All
+                        <input type="radio" name="gender" value=""> All
                     </label>
-                    
+
                     <label>
-                        <input type="radio" name="gender" value="Male" > Male
+                        <input type="radio" name="gender" value="Male"> Male
                     </label>
-                    
+
                     <label>
-                        <input type="radio" name="gender" value="Female" > Female
+                        <input type="radio" name="gender" value="Female"> Female
                     </label>
                     <label>
-                        <input type="radio" name="gender" value="Unisex" > Unisex
+                        <input type="radio" name="gender" value="Unisex"> Unisex
                     </label>
                 </div>
                 <div class="seasons" x-on:change="filterGarments()" x-model="seasonFilter">
                     <label>
-                        <input type="radio" name="season" value="" > All
+                        <input type="radio" name="season" value=""> All
                     </label>
                     <label>
                         <input type="radio" name="season" value="Summer"> Summer
@@ -72,13 +73,40 @@
                 </div>
                 <div class="col-3">
                     Filter by price range:
-                    <input type="range" class="form-range" name="priceRange" max="1000" min="0" step="50" class="priceRange" value="0" @click="filterGarmentsByPrice()" x-model="maxPrice">
+                    <input type="range" class="form-range" name="priceRange" max="1000" min="0" step="50"
+                        class="priceRange" value="0" @click="filterGarmentsByPrice()" x-model="maxPrice">
                     R<span x-text="Number(maxPrice).toFixed(2)" class="showPriceRange"></span>
                 </div>
             </div>
+
+            <div class="col-6">
+                <h2>Garments</h2>
+                <div>
+                    <h5>
+                        <span x-text="garmentsLength"></span> garments found
+                    </h5>
+                    <div class="garments">
+                        <template x-for="garment in garments">
+                            <div class="garment">
+                                <div> <i x-on:click="deleteGarment(garment.description)" class="fa-solid fa-trash"></i>
+                                </div>
+                                <img :src="`images/${garment.img}`">
+                                <div class="field">
+                                    <span x-text="garment.description"></span>
+                                </div>
+                                <div class="field">
+                                    <strong>
+                                        <span x-text="garment.price"></span>
+                                    </strong>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+
             </div>
 
-            <div class="addGarment">
+            <div class="addGarment col-3">
                 <button @click="toggle" class="btn btn-dark add button mt1" id="addGarmentBtn">Add garment</button>
                 <div class="add garment" x-show="open">
                     <h2>Add garment</h2>
@@ -109,34 +137,9 @@
                     </div>
                     <div class="mt1">
                         <input @click="addGarment()" type="button" name="action" value="Add"
-                        class="btn btn-dark addGarmentBtn">
-                        <input @click="toggle" type="button" name="action" value="Hide" class="btn btn-dark hideAddGarmetBtn">
-                    </div>
-                </div>
-
-            </div>
-
-            <div>
-                <h2>Garments</h2>
-                <div>
-                    <h5>
-                        <span x-text="garmentsLength"></span> garments found
-                    </h5>
-                    <div class="garments">
-                        <template x-for="garment in garments">
-                            <div class="garment">
-                                <div> <i x-on:click="deleteGarment(garment.description)" class="fa-solid fa-trash"></i> </div>
-                                <img :src="`images/${garment.img}`">
-                                <div class="field">
-                                    <span x-text="garment.description"></span>
-                                </div>
-                                <div class="field">
-                                    <strong>
-                                        <span x-text="garment.price"></span>
-                                    </strong>
-                                </div>
-                            </div>
-                        </template>
+                            class="btn btn-dark addGarmentBtn">
+                        <input @click="toggle" type="button" name="action" value="Hide"
+                            class="btn btn-dark hideAddGarmetBtn">
                     </div>
                 </div>
 
@@ -144,7 +147,7 @@
 
         </div>
     </div>
-    
+
 
     </div>
     <!-- Alpine Plugins -->

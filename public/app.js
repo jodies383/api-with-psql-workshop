@@ -36,32 +36,54 @@ document.addEventListener('alpine:init', () => {
 
                         axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
                     });
+                this.successMessage = true,
+                    this.$refs.successMessage.innerText = 'registration successful'
                 this.register = false
                 this.login = true
-
             }
-            else if (this.username == '') {
+            else if (this.username === '') {
                 this.errorMessage = true,
                     this.$refs.errorMessage.innerText = 'github username required'
             }
+            setTimeout(() => { this.successMessage = false }, 2000);
+            setTimeout(() => { this.errorMessage = false }, 2000);
+            this.username = ''
         },
         userLogin() {
             const url = `/api/garments`;
+            if (this.username !== 'jodies383') {
+                this.errorMessage = true,
+                    this.$refs.errorMessage.innerText = 'you do not have access'
+                console.log(result.data.message)
+
+            } else {
             axios
                 .get(url)
-                .then(result =>  {
-                    const results = result.data
-                    this.garments = results.data
-                    this.garmentsLength = results.data.length
-                    axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
-                    accessGarments = true
-                    loginInfo = false
-                })
+                .then(result => {
+                        const results = result.data
+                        this.garments = results.data
+                        this.garmentsLength = results.data.length
+                        this.accessGarments = true
+                        this.loginInfo = false
+                        axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
+                        this.successMessage = true,
+                            this.$refs.successMessage.innerText = 'login successful'
+                        })
+                    }
+
+            setTimeout(() => { this.successMessage = false }, 2000);
+            setTimeout(() => { this.errorMessage = false }, 2000);
+            this.username = ''
+        },
+        logout() {
+            localStorage.clear()
+            this.accessGarments = false
+            this.loginInfo = true
         },
         getData() {
             if (localStorage.getItem('token')) {
-                accessGarments = true
-                loginInfo = false
+                this.accessGarments = true
+                this.loginInfo = false
             }
             axios
                 .get(`/api/garments`)
@@ -117,7 +139,6 @@ document.addEventListener('alpine:init', () => {
                         if (result.data.message === 'duplicate') {
                             this.errorMessage = true,
                                 this.$refs.errorMessage.innerText = 'this garment already exists'
-                            console.log(result.data.message)
                         } else {
                             this.successMessage = true,
                                 this.$refs.successMessage.innerText = 'garment added'
