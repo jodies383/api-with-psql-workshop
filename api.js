@@ -79,12 +79,11 @@ module.exports = function (app, db) {
 	});
 
 	app.delete('/api/garments/:username', async function (req, res) {
-
 		const username = req.params.username
 		try {
 		let id = await db.one(`select id from users where username = $1`, [username])
 		const userId = id.id
-		const cart = await db.none(`delete * from cart WHERE user_id = $1`, [userId]);
+		const cart = await db.none(`delete from cart WHERE user_id = $1`, [userId]);
 			res.json({
 				status: 'success'
 			})
