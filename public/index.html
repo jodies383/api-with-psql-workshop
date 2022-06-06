@@ -23,25 +23,38 @@
     </nav>
     <div class="loginInfo" x-show="loginInfo">
         <div class="d-flex justify-content-center">
-            <h4>enter your github username</h4>
+            <h4>register with a username and password</h4>
         </div>
-        <div class="row">
-            <div class="d-flex justify-content-center">
-                <input type="text" x-model="username" class="username" name="username" id="">
-                <button @click="registerUser()" x-show="register" class="btn btn-dark register">Register</button>
-                <button @click="userLogin()" class="btn btn-dark login" x-show="login">Login</button>
+        <!-- <div class="d-flex justify-content-center"> -->
+        <div class="d-flex justify-content-center">
 
-            </div>
+            <input placeholder="username" type="text" x-model="username" class="username" name="username" id="">
+            <br>
+            <input placeholder="password" type="password" x-model="password" class="password" name="password" id="">
+
+            <button @click="registerUser()" x-show="register" class="btn btn-dark register">Register</button>
         </div>
+        <div class="d-flex justify-content-center">
+            <h5>already have an account?</h5>
+        </div>
+        <div class="d-flex justify-content-center">
+            <input placeholder="username" type="text" x-model="loginUsername" class="username" name="username" id="">
+            <br>
+            <input placeholder="password" type="password" x-model="loginPassword" class="password" name="password" id="">
+            <button @click="userLogin()" class="btn btn-dark login">Login</button>
+        </div>
+        <!-- </div> -->
+
 
     </div>
     <p id="snackbar" class="error" x-ref="errorMessage" x-show="errorMessage"></p>
     <p id="snackbar" class="success" x-ref="successMessage" x-show="successMessage"></p>
     <div class="container" x-show="accessGarments">
         <div class="garmentApi row">
-            <div class="filter col-3">
+            <div class="filter col-2">
                 <h2>Filter garments</h2>
                 <div class="genders" x-on:change="filterGarments()" x-model="genderFilter">
+
                     <label>
                         <input type="radio" name="gender" value=""> All
                     </label>
@@ -58,6 +71,7 @@
                     </label>
                 </div>
                 <div class="seasons" x-on:change="filterGarments()" x-model="seasonFilter">
+                    <br>
                     <label>
                         <input type="radio" name="season" value=""> All
                     </label>
@@ -71,7 +85,7 @@
                         <input type="radio" name="season" value="All Seasons"> All seasons
                     </label>
                 </div>
-                <div class="col-3">
+                <div class="">
                     Filter by price range:
                     <input type="range" class="form-range" name="priceRange" max="1000" min="0" step="50"
                         class="priceRange" value="0" @click="filterGarmentsByPrice()" x-model="maxPrice">
@@ -79,7 +93,7 @@
                 </div>
             </div>
 
-            <div class="col-6">
+            <div class="col-7">
                 <h2>Garments</h2>
                 <div>
                     <h5>
@@ -99,6 +113,10 @@
                                         <span x-text="garment.price"></span>
                                     </strong>
                                 </div>
+                                <div class="field">
+                                    <button @click="addToCart(garment.description, garment.price)" class="btn btn-primary">add to cart</button>
+                                </div>
+
                             </div>
                         </template>
                     </div>
@@ -107,6 +125,25 @@
             </div>
 
             <div class="addGarment col-3">
+                <div class="cart">
+                    <h3>Shopping Cart</h3>
+                    <button @click="clearCart()" class="btn btn-primary">clear cart</button>
+                    <img src="shopping-cart.png" alt="">
+                    <table>
+                    <template x-for="items in cartInfo">
+                            <tr>
+                        
+                                <td><span x-text="items.item"></span></td>
+                                
+                                <td>  R<span x-text="items.price"></span></td>
+                            </tr>
+                            
+                        </template>
+                        <td><strong>Total price</strong></td>
+                        <td><span class="totalPrice">0.00</span></td>
+                    </table>
+
+                </div>
                 <button @click="toggle" class="btn btn-dark add button mt1" id="addGarmentBtn">Add garment</button>
                 <div class="add garment" x-show="open">
                     <h2>Add garment</h2>

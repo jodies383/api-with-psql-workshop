@@ -1,17 +1,28 @@
 module.exports = function (app, db) {
 	const jwt = require('jsonwebtoken')
-	
-	app.post('/api/login', (req, res, next) => {
+
+	app.post('/api/login', async function (req, res, next) {
 		const { username } = req.body;
-	
+		const { password } = req.body;
+		let role
+		if (username === process.env.USERNAME) {
+			role = 'admin'
+		} else {
+			role = 'user'
+		}
 		const token = jwt.sign({
 			username
 		}, process.env.ACCESS_TOKEN_SECRET);
+		let checkDuplicate = await db.manyOrNone(`SELECT id from users WHERE username = $1`, [username]);
+
+		if (checkDuplicate.length < 1) {
+		await db.none(`insert into users (username, password, role) values ($1,$2,$3)`, [username, password, role])
+		}
 	
 		res.json({
 			token
 		});
-	
+
 	})
 	function verifyToken(req, res, next) {
 
@@ -19,11 +30,11 @@ module.exports = function (app, db) {
 		if (!req.headers.authorization || !token) {
 			res.sendStatus(401);
 			return;
-		}	
+		}
 		const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
-	
+
 		const { username } = decoded;
-	
+
 		if (username && username === process.env.USERNAME) {
 			next();
 		} else {
@@ -31,7 +42,7 @@ module.exports = function (app, db) {
 				message: 'unauthorized'
 			});
 		}
-	
+
 	}
 	app.get('/api/test', function (req, res) {
 		res.json({
@@ -39,10 +50,12 @@ module.exports = function (app, db) {
 		});
 	});
 
-	app.get('/api/garments', verifyToken, async function (req, res) {
+	app.get('/api/garments/:username', verifyToken, async function (req, res) {
 
 		// add some sql queries that filter on gender & season
 		const { season, gender } = req.query;
+		const username = req.params.username
+		console.log(req.params)
 		let garments
 		if (!gender && !season) {
 			garments = await db.manyOrNone(`select * from garment`);
@@ -56,11 +69,35 @@ module.exports = function (app, db) {
 		else if (gender && season) {
 			garments = await db.manyOrNone(`select * from garment where season = $1 and gender = $2`, [season, gender]);
 		}
-
+		let id = await db.one(`select id from users where username = $1`, [username])
+		const userId = id.id
+		const cart = await db.manyOrNone(`SELECT * from cart WHERE user_id = $1`, [userId]);
 		res.json({
-			data: garments
+			data: garments,
+			cart: cart
 		})
 	});
+
+	app.delete('/api/garments/:username', async function (req, res) {
+
+		const username = req.params.username
+		try {
+		let id = await db.one(`select id from users where username = $1`, [username])
+		const userId = id.id
+		const cart = await db.none(`delete * from cart WHERE user_id = $1`, [userId]);
+			res.json({
+				status: 'success'
+			})
+		} catch (err) {
+			// console.log(err);
+			res.json({
+				status: 'success',
+				error: err.stack
+			})
+		}
+	});
+		
+
 
 	app.put('/api/garment/:id', async function (req, res) {
 
@@ -134,12 +171,12 @@ module.exports = function (app, db) {
 		try {
 
 			const { description, price, img, season, gender } = req.body;
-			
+
 			// insert a new garment in the database
 			let checkDuplicate = await db.manyOrNone(`SELECT id from garment WHERE description = $1`, [description]);
 
 			if (checkDuplicate.length < 1) {
-				
+
 				await db.none(`insert into garment (description, img, season, gender, price) values ($1,$2,$3,$4,$5)`, [description, img, season, gender, price])
 				res.json({
 					status: 'success'
@@ -150,6 +187,37 @@ module.exports = function (app, db) {
 					message: 'duplicate'
 				})
 			}
+
+		} catch (err) {
+			console.log(err);
+			res.json({
+				status: 'error',
+				error: err.message
+			})
+		}
+	});
+	app.post('/api/', async function (req, res) {
+
+		try {
+
+			const { item, price, username } = req.body;
+			let id = await db.one(`select id from users where username = $1`, [username])
+			const userId = id.id
+			// insert a new garment in the database
+			// let checkDuplicate = await db.manyOrNone(`SELECT id from garment WHERE description = $1`, [description]);
+
+			// if (checkDuplicate.length < 1) {
+
+				await db.none(`insert into cart (item, price, user_id) values ($1,$2,$3)`, [item, price, userId])
+				res.json({
+					status: 'success'
+				});
+			// }
+			// else {
+			// 	res.status(200).json({
+			// 		message: 'duplicate'
+			// 	})
+			// }
 
 		} catch (err) {
 			console.log(err);

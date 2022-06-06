@@ -5,6 +5,7 @@ document.addEventListener('alpine:init', () => {
         errorMessage: false,
         successMessage: false,
         garments: '',
+        cartInfo: '',
         garmentsLength: 0,
         genderFilter: '',
         seasonFilter: '',
@@ -20,6 +21,9 @@ document.addEventListener('alpine:init', () => {
         register: true,
         login: false,
         username: '',
+        password: '',
+        loginUsername: '',
+        loginPassword: '',
 
 
         toggle() {
@@ -28,7 +32,7 @@ document.addEventListener('alpine:init', () => {
         registerUser() {
             if (this.username !== '') {
                 axios
-                    .post('/api/login/', { username: this.username })
+                    .post('/api/login/', { username: this.username, password: this.password })
                     .then(function (result) {
                         const { token } = result.data;
 
@@ -48,49 +52,104 @@ document.addEventListener('alpine:init', () => {
             setTimeout(() => { this.successMessage = false }, 2000);
             setTimeout(() => { this.errorMessage = false }, 2000);
             this.username = ''
+            this.password = ''
         },
         userLogin() {
+            const fields = {
+                username: localStorage.getItem('username')
+            }
+            localStorage.setItem('username', this.loginUsername);
             const url = `/api/garments`;
-            if (this.username !== 'jodies383') {
+            if (this.loginUsername !== 'jodies383') {
                 this.errorMessage = true,
                     this.$refs.errorMessage.innerText = 'you do not have access'
                 console.log(result.data.message)
 
             } else {
-            axios
-                .get(url)
-                .then(result => {
+                axios
+                    .get(url)
+                    .then(result => {
                         const results = result.data
                         this.garments = results.data
                         this.garmentsLength = results.data.length
                         this.accessGarments = true
                         this.loginInfo = false
+                        this.cartInfo = result.cart
                         axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
                         this.successMessage = true,
                             this.$refs.successMessage.innerText = 'login successful'
-                        })
-                    }
+                    })
+            }
 
             setTimeout(() => { this.successMessage = false }, 2000);
             setTimeout(() => { this.errorMessage = false }, 2000);
             this.username = ''
+            this.password = ''
         },
         logout() {
             localStorage.clear()
             this.accessGarments = false
             this.loginInfo = true
         },
+        addToCart(description, price) {
+            const fields = {
+                item: description,
+                price: price,
+                username: localStorage.getItem('username')
+            };
+            const username = localStorage.getItem('username')
+            axios
+                .post(`/api/`, fields)
+                .then(result => {
+                    axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
+
+                })
+            axios
+                .get(`/api/garments/${username}`)
+                .then(result => {
+
+                    const results = result.data
+                    this.garments = results.data
+                    this.garmentsLength = results.data.length
+                    this.cartInfo = results.cart
+                    axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
+                })
+
+        },
+        clearCart(){
+            const username = localStorage.getItem('username')
+
+            axios
+            .delete(`/api/garments/${username}`)
+            .then(result => {
+                axios
+                .get(`/api/garments/${username}`)
+                .then(result => {
+
+                    const results = result.data
+                    this.garments = results.data
+                    this.garmentsLength = results.data.length
+                    this.cartInfo = results.cart
+                    axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
+                })
+            })
+        },
         getData() {
+
+            const username = localStorage.getItem('username')
+
             if (localStorage.getItem('token')) {
                 this.accessGarments = true
                 this.loginInfo = false
             }
             axios
-                .get(`/api/garments`)
+                .get(`/api/garments/${username}`)
                 .then(result => {
+
                     const results = result.data
                     this.garments = results.data
                     this.garmentsLength = results.data.length
+                    this.cartInfo = results.cart
                     axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
                 })
         },
