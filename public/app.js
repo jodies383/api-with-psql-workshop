@@ -25,7 +25,6 @@ document.addEventListener('alpine:init', () => {
         loginUsername: '',
         loginPassword: '',
 
-
         toggle() {
             this.open = !this.open
         },
