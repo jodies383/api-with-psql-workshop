@@ -33,8 +33,6 @@ const db = pgp(get_PostgreSQL_connection());
 app.use(express.static('public'))
 API(app, db);
 
-
-
 //configure the port number using and environment number
 var portNumber = process.env.PORT || 3000;
 
